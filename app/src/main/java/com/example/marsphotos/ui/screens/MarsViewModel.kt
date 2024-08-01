@@ -26,6 +26,7 @@ import androidx.lifecycle.viewmodel.initializer
 import androidx.lifecycle.viewmodel.viewModelFactory
 import com.example.marsphotos.MarsPhotosApplication
 import com.example.marsphotos.data.MarsPhotosRepository
+import com.example.marsphotos.network.MarsPhoto
 import kotlinx.coroutines.launch
 import java.io.IOException
 
@@ -33,7 +34,7 @@ import java.io.IOException
 sealed interface MarsUiState {
     // 接口内定义的数据类，实现接口MarsUiState
     // 只是接口MarsUiState没的成员，所以数据类与对象都没有要实现的成员
-    data class Success(val photos: String) : MarsUiState
+    data class Success(val photos: List<MarsPhoto>) : MarsUiState
     // 单例对象，实现接口MarsUiState
     object Error : MarsUiState
     object Loading : MarsUiState
@@ -73,7 +74,7 @@ class MarsViewModel(private val marsPhotosRepository: MarsPhotosRepository) : Vi
                 // 这里是手动实例化仓库，后面直接与仓库定义的接口打交道
                 // ViewModel读取数据实现松耦合，不需要知道具体是哪个数据源，
                 val listResult = marsPhotosRepository.getMarsPhotos()
-                marsUiState = MarsUiState.Success("Success: ${listResult.size} Mars photos retrieved")
+                marsUiState = MarsUiState.Success(listResult)
 
             }
             catch (e:IOException){
